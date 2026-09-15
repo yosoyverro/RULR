@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "RULR",
-  "version": "0.1.0",
-  "description": "Measure anything on the web. Inspect element sizes, draw measurement boxes, and measure distances directly on any webpage.",
+  "version": "0.2.0",
+  "description": "Measure anything on the web. Inspect sizes, spacing and distances, draw boxes, and place customizable guides directly on any webpage.",
   "permissions": ["activeTab", "scripting"],
   "action": {
     "default_title": "RULR",
