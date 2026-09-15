@@ -2,7 +2,7 @@
 
 body {
   margin: 0;
-  min-width: 292px;
+  min-width: 318px;
   background: #0e1116;
   color: #f7f8fa;
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -10,10 +10,23 @@ body {
 
 .panel { padding: 18px; }
 
+.brand-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
 .brand {
   font-size: 20px;
   font-weight: 800;
   letter-spacing: .16em;
+}
+
+.version {
+  margin-top: 2px;
+  color: #7f8997;
+  font-size: 10px;
 }
 
 .tagline {
@@ -43,6 +56,72 @@ button:hover { background: #202733; }
 button.primary { background: #f7f8fa; color: #11151b; border-color: #f7f8fa; }
 button.primary:hover { background: #e8ebef; }
 button span { float: right; color: #8993a1; }
+
+.controls {
+  margin-top: 14px;
+  padding: 12px;
+  border: 1px solid #252d38;
+  border-radius: 12px;
+  background: #12171e;
+}
+
+.section-title {
+  margin-bottom: 8px;
+  color: #dce1e8;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+.control-row {
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-top: 1px solid #202731;
+  color: #aeb6c2;
+  font-size: 11px;
+}
+
+.control-row:first-of-type { border-top: 0; }
+
+input[type="checkbox"] {
+  accent-color: #ff3b30;
+  width: 16px;
+  height: 16px;
+}
+
+input[type="color"] {
+  width: 30px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid #343d49;
+  border-radius: 6px;
+  background: transparent;
+}
+
+select {
+  border: 1px solid #303846;
+  border-radius: 6px;
+  padding: 4px 6px;
+  background: #171c24;
+  color: #f7f8fa;
+  font: 600 10px/1.2 inherit;
+}
+
+button.danger {
+  margin-top: 8px;
+  padding: 9px 10px;
+  text-align: center;
+  border-color: #4f2525;
+  background: #241617;
+  color: #ffb1ac;
+  font-size: 11px;
+}
+
+button.danger:hover { background: #321a1c; }
 
 .tips {
   margin: 14px 0;
