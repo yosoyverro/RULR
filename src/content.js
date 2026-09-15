@@ -11,7 +11,10 @@
     pinned: false,
     pinnedElement: null,
     lastX: 0,
-    lastY: 0
+    lastY: 0,
+    spacingFirst: null,
+    spacingSecond: null,
+    spacingPinned: false
   };
 
   const root = document.createElement("div");
@@ -25,6 +28,21 @@
   outline.className = "rulr-outline";
   outline.style.display = "none";
   root.appendChild(outline);
+
+  const outline2 = document.createElement("div");
+  outline2.className = "rulr-outline-secondary";
+  outline2.style.display = "none";
+  root.appendChild(outline2);
+
+  const gapH = document.createElement("div");
+  gapH.className = "rulr-gap-line horizontal";
+  gapH.style.display = "none";
+  root.appendChild(gapH);
+
+  const gapV = document.createElement("div");
+  gapV.className = "rulr-gap-line vertical";
+  gapV.style.display = "none";
+  root.appendChild(gapV);
 
   const box = document.createElement("div");
   box.className = "rulr-box";
@@ -66,6 +84,14 @@
     return name;
   }
 
+  function setRect(node, r) {
+    node.style.display = "block";
+    node.style.left = `${r.left}px`;
+    node.style.top = `${r.top}px`;
+    node.style.width = `${r.width}px`;
+    node.style.height = `${r.height}px`;
+  }
+
   function positionLabel(x, y, text) {
     label.textContent = text;
     label.style.display = "block";
@@ -78,6 +104,9 @@
 
   function clearTransient() {
     outline.style.display = "none";
+    outline2.style.display = "none";
+    gapH.style.display = "none";
+    gapV.style.display = "none";
     box.style.display = "none";
     line.style.display = "none";
     label.style.display = "none";
@@ -99,11 +128,7 @@
 
     const r = el.getBoundingClientRect();
     const cs = getComputedStyle(el);
-    outline.style.display = "block";
-    outline.style.left = `${r.left}px`;
-    outline.style.top = `${r.top}px`;
-    outline.style.width = `${r.width}px`;
-    outline.style.height = `${r.height}px`;
+    setRect(outline, r);
 
     const summary = `${px(r.width)} × ${px(r.height)}`;
     const text = `${elementName(el)}  ${summary}\n${viewportPercent(r.width, "x")} viewport wide · x ${px(r.left)} · y ${px(r.top)}\npadding ${edges(cs, "padding")} · margin ${edges(cs, "margin")}${state.pinned ? "\nPinned · click anywhere to inspect another element" : "\nClick to pin · Ctrl/Cmd+C to copy"}`;
@@ -133,6 +158,58 @@
     state.pinnedElement = null;
     inspectAt(x, y);
     showToast("Inspecting page");
+  }
+
+  function renderSpacing(first, second, x, y) {
+    if (!first?.isConnected || !second?.isConnected || first === second) return;
+
+    const a = first.getBoundingClientRect();
+    const b = second.getBoundingClientRect();
+    setRect(outline, a);
+    setRect(outline2, b);
+
+    const gapX = b.left > a.right ? b.left - a.right : a.left > b.right ? a.left - b.right : 0;
+    const gapY = b.top > a.bottom ? b.top - a.bottom : a.top > b.bottom ? a.top - b.bottom : 0;
+
+    gapH.style.display = "none";
+    gapV.style.display = "none";
+
+    if (gapX > 0) {
+      const left = b.left > a.right ? a.right : b.right;
+      const right = b.left > a.right ? b.left : a.left;
+      const overlapTop = Math.max(a.top, b.top);
+      const overlapBottom = Math.min(a.bottom, b.bottom);
+      const yLine = overlapBottom >= overlapTop ? (overlapTop + overlapBottom) / 2 : (a.top + a.height / 2 + b.top + b.height / 2) / 2;
+      gapH.style.display = "block";
+      gapH.style.left = `${left}px`;
+      gapH.style.top = `${yLine}px`;
+      gapH.style.width = `${right - left}px`;
+    }
+
+    if (gapY > 0) {
+      const top = b.top > a.bottom ? a.bottom : b.bottom;
+      const bottom = b.top > a.bottom ? b.top : a.top;
+      const overlapLeft = Math.max(a.left, b.left);
+      const overlapRight = Math.min(a.right, b.right);
+      const xLine = overlapRight >= overlapLeft ? (overlapLeft + overlapRight) / 2 : (a.left + a.width / 2 + b.left + b.width / 2) / 2;
+      gapV.style.display = "block";
+      gapV.style.left = `${xLine}px`;
+      gapV.style.top = `${top}px`;
+      gapV.style.height = `${bottom - top}px`;
+    }
+
+    const relation = gapX === 0 && gapY === 0 ? "Elements overlap" : `Horizontal gap ${px(gapX)} · Vertical gap ${px(gapY)}`;
+    const status = state.spacingPinned ? "Pinned pair · click to start a new measurement" : "Click second element to pin pair";
+    const text = `${elementName(first)} ↔ ${elementName(second)}\n${relation}\n${status}`;
+    state.lastMeasurement = `${elementName(first)} to ${elementName(second)} — horizontal gap ${px(gapX)}, vertical gap ${px(gapY)}`;
+    positionLabel(x, y, text);
+  }
+
+  function spacingAt(x, y) {
+    if (!state.spacingFirst) return;
+    const second = state.spacingPinned ? state.spacingSecond : elementAt(x, y);
+    if (!second || second === state.spacingFirst || second === document.body || second === document.documentElement) return;
+    renderSpacing(state.spacingFirst, second, x, y);
   }
 
   function normalizedEnd(x, y) {
@@ -181,6 +258,7 @@
     crosshair.style.top = `${e.clientY}px`;
 
     if (state.mode === "inspect" && !state.dragging && !state.pinned) inspectAt(e.clientX, e.clientY);
+    if (state.mode === "spacing" && state.spacingFirst && !state.spacingPinned) spacingAt(e.clientX, e.clientY);
     if (state.dragging && state.mode === "box") drawBox(e.clientX, e.clientY);
     if (state.dragging && state.mode === "distance") drawDistance(e.clientX, e.clientY);
   }
@@ -191,6 +269,30 @@
     if (state.mode === "inspect") {
       if (state.pinned) unpinInspect(e.clientX, e.clientY);
       else pinInspect(e.clientX, e.clientY);
+      e.preventDefault();
+      e.stopPropagation();
+      return;
+    }
+
+    if (state.mode === "spacing") {
+      const el = elementAt(e.clientX, e.clientY);
+      if (!el || el === document.documentElement || el === document.body) return;
+
+      if (!state.spacingFirst || state.spacingPinned) {
+        clearTransient();
+        state.spacingFirst = el;
+        state.spacingSecond = null;
+        state.spacingPinned = false;
+        setRect(outline, el.getBoundingClientRect());
+        positionLabel(e.clientX, e.clientY, `${elementName(el)} selected\nHover another element to measure spacing`);
+        showToast("First element selected");
+      } else if (el !== state.spacingFirst) {
+        state.spacingSecond = el;
+        state.spacingPinned = true;
+        renderSpacing(state.spacingFirst, el, e.clientX, e.clientY);
+        showToast("Spacing pinned");
+      }
+
       e.preventDefault();
       e.stopPropagation();
       return;
@@ -235,18 +337,28 @@
   }
 
   function setMode(mode) {
-    if (!["inspect", "box", "distance"].includes(mode)) return;
+    if (!["inspect", "spacing", "box", "distance"].includes(mode)) return;
     state.mode = mode;
     state.pinned = false;
     state.pinnedElement = null;
+    state.spacingFirst = null;
+    state.spacingSecond = null;
+    state.spacingPinned = false;
     clearTransient();
-    showToast(mode === "inspect" ? "What size is this?" : mode === "box" ? "Box measure" : "Distance measure");
+    const names = {
+      inspect: "What size is this?",
+      spacing: "Spacing measure",
+      box: "Box measure",
+      distance: "Distance measure"
+    };
+    showToast(names[mode]);
   }
 
   function onKeyDown(e) {
     state.shift = e.shiftKey;
     if (e.key === "Escape") stop();
     if (e.key.toLowerCase() === "i") setMode("inspect");
+    if (e.key.toLowerCase() === "s") setMode("spacing");
     if (e.key.toLowerCase() === "b") setMode("box");
     if (e.key.toLowerCase() === "d") setMode("distance");
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "c" && state.lastMeasurement) {
@@ -262,6 +374,13 @@
   function onViewportChange() {
     if (state.mode === "inspect" && state.pinned && state.pinnedElement?.isConnected) {
       renderElement(state.pinnedElement, state.lastX, state.lastY);
+    }
+    if (state.mode === "spacing" && state.spacingFirst?.isConnected) {
+      if (state.spacingPinned && state.spacingSecond?.isConnected) {
+        renderSpacing(state.spacingFirst, state.spacingSecond, state.lastX, state.lastY);
+      } else {
+        setRect(outline, state.spacingFirst.getBoundingClientRect());
+      }
     }
   }
 
