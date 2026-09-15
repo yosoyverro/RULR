@@ -14,22 +14,18 @@ function isRestricted(url = "") {
     url.startsWith("https://chrome.google.com/webstore/");
 }
 
-async function ensureInjected(tabId) {
+async function isInjected(tabId) {
   const [{ result: active }] = await chrome.scripting.executeScript({
     target: { tabId },
     func: () => Boolean(window.__RULR__)
   });
+  return active;
+}
 
-  if (!active) {
-    await chrome.scripting.insertCSS({
-      target: { tabId },
-      files: ["src/content.css"]
-    });
-    await chrome.scripting.executeScript({
-      target: { tabId },
-      files: ["src/content.js"]
-    });
-  }
+async function ensureInjected(tabId) {
+  if (await isInjected(tabId)) return;
+  await chrome.scripting.insertCSS({ target: { tabId }, files: ["src/content.css"] });
+  await chrome.scripting.executeScript({ target: { tabId }, files: ["src/content.js"] });
 }
 
 async function activate(mode) {
@@ -39,7 +35,6 @@ async function activate(mode) {
       status.textContent = "Chrome blocks extensions on this page.";
       return;
     }
-
     await ensureInjected(tab.id);
     await chrome.scripting.executeScript({
       target: { tabId: tab.id },
@@ -53,18 +48,28 @@ async function activate(mode) {
   }
 }
 
-async function stopRulr() {
+async function runOnRulr(fn, args = []) {
   try {
     const tab = await getActiveTab();
-    if (!tab?.id || isRestricted(tab.url)) return;
-    await chrome.scripting.executeScript({
+    if (!tab?.id || isRestricted(tab.url) || !(await isInjected(tab.id))) {
+      status.textContent = "Turn on a RULR mode first.";
+      return null;
+    }
+    const [{ result }] = await chrome.scripting.executeScript({
       target: { tabId: tab.id },
-      func: () => window.__RULR__?.stop()
+      args,
+      func: fn
     });
-    window.close();
+    return result;
   } catch (error) {
     status.textContent = "RULR is not active here.";
+    return null;
   }
+}
+
+async function stopRulr() {
+  await runOnRulr(() => window.__RULR__?.stop());
+  window.close();
 }
 
 document.querySelectorAll("[data-mode]").forEach((button) => {
@@ -72,3 +77,42 @@ document.querySelectorAll("[data-mode]").forEach((button) => {
 });
 
 document.getElementById("stop").addEventListener("click", stopRulr);
+
+document.getElementById("clear-guides").addEventListener("click", async () => {
+  await runOnRulr(() => window.__RULR__?.clearGuides());
+  status.textContent = "Guides cleared.";
+});
+
+document.getElementById("snap").addEventListener("change", async (event) => {
+  await runOnRulr((enabled) => window.__RULR__?.setSnapToElements(enabled), [event.target.checked]);
+});
+
+document.getElementById("show-guides").addEventListener("change", async (event) => {
+  await runOnRulr((visible) => window.__RULR__?.setGuidesVisible(visible), [event.target.checked]);
+});
+
+document.getElementById("guide-color").addEventListener("input", async (event) => {
+  await runOnRulr((color) => window.__RULR__?.setGuideStyle({ color }), [event.target.value]);
+});
+
+document.getElementById("guide-width").addEventListener("change", async (event) => {
+  await runOnRulr((width) => window.__RULR__?.setGuideStyle({ width }), [Number(event.target.value)]);
+});
+
+(async function hydrateControls() {
+  try {
+    const tab = await getActiveTab();
+    if (!tab?.id || isRestricted(tab.url) || !(await isInjected(tab.id))) return;
+    const [{ result }] = await chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      func: () => window.__RULR__?.getState()
+    });
+    if (!result) return;
+    document.getElementById("snap").checked = result.snapToElements;
+    document.getElementById("show-guides").checked = result.guidesVisible;
+    document.getElementById("guide-color").value = result.guideColor;
+    document.getElementById("guide-width").value = String(result.guideWidth);
+  } catch {
+    // Controls simply keep their defaults until RULR is active.
+  }
+})();
