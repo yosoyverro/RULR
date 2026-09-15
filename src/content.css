@@ -13,64 +13,40 @@ html.rulr-active, html.rulr-active * {
 
 #rulr-crosshair {
   position: fixed;
-  width: 34px;
-  height: 34px;
+  width: 38px;
+  height: 38px;
   transform: translate(-50%, -50%);
   pointer-events: none;
+  border-radius: 50%;
+  background: #050505;
+  border: 3px solid #fff;
+  box-shadow: 0 0 0 2px #050505, 0 2px 8px rgba(0,0,0,.45);
+  box-sizing: border-box;
 }
 
 #rulr-crosshair::before,
 #rulr-crosshair::after {
   content: "";
   position: absolute;
-  background: #0a0a0a;
-  border: 1px solid #fff;
-  box-shadow: 0 0 0 1px #0a0a0a, 0 1px 4px rgba(0,0,0,.45);
+  background: #050505;
+  box-shadow: 0 0 0 1px #fff, 0 0 0 2px #050505;
   border-radius: 2px;
-  box-sizing: border-box;
 }
 
 #rulr-crosshair::before {
-  width: 34px;
+  width: 48px;
   height: 3px;
-  top: 15.5px;
-  left: 0;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 
 #rulr-crosshair::after {
   width: 3px;
-  height: 34px;
-  left: 15.5px;
-  top: 0;
-}
-
-/* Two-tone center target: black core + white halo + black outer ring.
-   This remains visible on white, black, photos, gradients and mixed backgrounds. */
-#rulr-crosshair {
-  filter: drop-shadow(0 1px 1px rgba(0,0,0,.35));
-}
-
-#rulr-crosshair > * {
-  pointer-events: none;
-}
-
-#rulr-crosshair::marker {
-  content: none;
-}
-
-#rulr-root::after {
-  content: "";
-  position: fixed;
-  left: var(--rulr-cursor-x, -100px);
-  top: var(--rulr-cursor-y, -100px);
-  width: 9px;
-  height: 9px;
+  height: 48px;
+  left: 50%;
+  top: 50%;
   transform: translate(-50%, -50%);
-  border-radius: 50%;
-  background: #0a0a0a;
-  border: 2px solid #fff;
-  box-shadow: 0 0 0 1px #0a0a0a;
-  pointer-events: none;
 }
 
 .rulr-outline,
