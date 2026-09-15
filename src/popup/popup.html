@@ -8,19 +8,52 @@
 </head>
 <body>
   <main class="panel">
-    <div class="brand">RULR</div>
-    <p class="tagline">Measure anything on the web.</p>
+    <div class="brand-row">
+      <div>
+        <div class="brand">RULR</div>
+        <p class="tagline">Measure anything on the web.</p>
+      </div>
+      <span class="version">v0.2</span>
+    </div>
 
     <div class="modes">
-      <button data-mode="inspect" class="primary">What size is this?</button>
+      <button data-mode="inspect" class="primary">What size is this? <span>I</span></button>
       <button data-mode="spacing">Spacing <span>S</span></button>
       <button data-mode="box">Box measure <span>B</span></button>
       <button data-mode="distance">Distance <span>D</span></button>
+      <button data-mode="guide">Guides <span>G</span></button>
     </div>
 
+    <section class="controls">
+      <div class="section-title">Guide controls</div>
+      <label class="control-row">
+        <span>Snap to elements</span>
+        <input id="snap" type="checkbox" checked />
+      </label>
+      <label class="control-row">
+        <span>Show guides</span>
+        <input id="show-guides" type="checkbox" checked />
+      </label>
+      <label class="control-row">
+        <span>Guide color</span>
+        <input id="guide-color" type="color" value="#ff3b30" />
+      </label>
+      <label class="control-row">
+        <span>Line width</span>
+        <select id="guide-width">
+          <option value="1">1 px</option>
+          <option value="2">2 px</option>
+          <option value="3">3 px</option>
+          <option value="4">4 px</option>
+        </select>
+      </label>
+      <button id="clear-guides" class="danger">Remove all guides</button>
+    </section>
+
     <div class="tips">
-      <div><kbd>Click</kbd> pin / select elements</div>
-      <div><kbd>Shift</kbd> lock axis</div>
+      <div><kbd>Click</kbd> pin / select / add horizontal guide</div>
+      <div><kbd>Shift + Click</kbd> add vertical guide</div>
+      <div><kbd>Shift</kbd> lock box/distance axis</div>
       <div><kbd>Ctrl/Cmd + C</kbd> copy</div>
       <div><kbd>Esc</kbd> exit</div>
     </div>
