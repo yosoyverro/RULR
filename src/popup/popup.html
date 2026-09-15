@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RULR</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <main class="panel">
+    <div class="brand">RULR</div>
+    <p class="tagline">Measure anything on the web.</p>
+
+    <div class="modes">
+      <button data-mode="inspect" class="primary">What size is this?</button>
+      <button data-mode="box">Box measure <span>B</span></button>
+      <button data-mode="distance">Distance <span>D</span></button>
+    </div>
+
+    <div class="tips">
+      <div><kbd>Shift</kbd> lock axis</div>
+      <div><kbd>Ctrl/Cmd + C</kbd> copy</div>
+      <div><kbd>Esc</kbd> exit</div>
+    </div>
+
+    <button id="stop" class="ghost">Turn off RULR</button>
+    <p id="status" class="status" aria-live="polite"></p>
+  </main>
+  <script src="popup.js"></script>
+</body>
+</html>
