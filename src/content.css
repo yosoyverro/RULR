@@ -42,6 +42,7 @@ html.rulr-active, html.rulr-active * {
 }
 
 .rulr-outline,
+.rulr-outline-secondary,
 .rulr-box {
   position: fixed;
   border: 1px solid white;
@@ -50,13 +51,29 @@ html.rulr-active, html.rulr-active * {
   box-sizing: border-box;
 }
 
-#rulr-distance-line {
+.rulr-outline-secondary {
+  border-style: dashed;
+}
+
+#rulr-distance-line,
+.rulr-gap-line {
   position: fixed;
-  height: 2px;
   transform-origin: 0 50%;
   background: white;
   box-shadow: 0 0 0 1px black;
   pointer-events: none;
+}
+
+#rulr-distance-line {
+  height: 2px;
+}
+
+.rulr-gap-line.horizontal {
+  height: 2px;
+}
+
+.rulr-gap-line.vertical {
+  width: 2px;
 }
 
 .rulr-label {
