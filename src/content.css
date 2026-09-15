@@ -18,9 +18,9 @@ html.rulr-active, html.rulr-active * {
   transform: translate(-50%, -50%);
   pointer-events: none;
   border-radius: 50%;
-  background: #050505;
+  background: #ff2d2d;
   border: 3px solid #fff;
-  box-shadow: 0 0 0 2px #050505, 0 2px 8px rgba(0,0,0,.45);
+  box-shadow: 0 0 0 2px #7a0000, 0 2px 8px rgba(0,0,0,.45);
   box-sizing: border-box;
 }
 
@@ -28,8 +28,8 @@ html.rulr-active, html.rulr-active * {
 #rulr-crosshair::after {
   content: "";
   position: absolute;
-  background: #050505;
-  box-shadow: 0 0 0 1px #fff, 0 0 0 2px #050505;
+  background: #ff2d2d;
+  box-shadow: 0 0 0 1px #fff, 0 0 0 2px #7a0000;
   border-radius: 2px;
 }
 
