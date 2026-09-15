@@ -13,14 +13,13 @@ html.rulr-active, html.rulr-active * {
 
 #rulr-crosshair {
   position: fixed;
-  width: 38px;
-  height: 38px;
+  width: 28px;
+  height: 28px;
   transform: translate(-50%, -50%);
   pointer-events: none;
   border-radius: 50%;
-  background: #ff2d2d;
-  border: 3px solid #fff;
-  box-shadow: 0 0 0 2px #7a0000, 0 2px 8px rgba(0,0,0,.45);
+  border: 2px solid #ff3b30;
+  box-shadow: 0 0 0 1px #fff, 0 0 0 2px #9b120b, 0 2px 7px rgba(0,0,0,.35);
   box-sizing: border-box;
 }
 
@@ -28,22 +27,22 @@ html.rulr-active, html.rulr-active * {
 #rulr-crosshair::after {
   content: "";
   position: absolute;
-  background: #ff2d2d;
-  box-shadow: 0 0 0 1px #fff, 0 0 0 2px #7a0000;
+  background: #ff3b30;
+  box-shadow: 0 0 0 1px #fff;
   border-radius: 2px;
 }
 
 #rulr-crosshair::before {
-  width: 48px;
-  height: 3px;
+  width: 38px;
+  height: 2px;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
 }
 
 #rulr-crosshair::after {
-  width: 3px;
-  height: 48px;
+  width: 2px;
+  height: 38px;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
@@ -53,35 +52,58 @@ html.rulr-active, html.rulr-active * {
 .rulr-outline-secondary,
 .rulr-box {
   position: fixed;
-  border: 1px solid white;
-  box-shadow: 0 0 0 1px black, 0 0 0 2px white;
+  border: 1px solid #fff;
+  box-shadow: 0 0 0 1px #111, 0 0 0 2px #fff;
   pointer-events: none;
   box-sizing: border-box;
 }
 
-.rulr-outline-secondary {
-  border-style: dashed;
-}
+.rulr-outline-secondary { border-style: dashed; }
 
 #rulr-distance-line,
 .rulr-gap-line {
   position: fixed;
   transform-origin: 0 50%;
-  background: white;
-  box-shadow: 0 0 0 1px black;
+  background: #fff;
+  box-shadow: 0 0 0 1px #111;
   pointer-events: none;
 }
 
-#rulr-distance-line {
-  height: 2px;
+#rulr-distance-line,
+.rulr-gap-line.horizontal { height: 2px; }
+.rulr-gap-line.vertical { width: 2px; }
+
+#rulr-guides {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
 }
 
-.rulr-gap-line.horizontal {
-  height: 2px;
+.rulr-guide {
+  position: fixed;
+  pointer-events: none;
+  background: var(--rulr-guide-color, #ff3b30);
+  box-shadow: 0 0 0 1px rgba(255,255,255,.68);
+  opacity: .95;
 }
 
-.rulr-gap-line.vertical {
-  width: 2px;
+.rulr-guide.horizontal {
+  left: 0;
+  right: 0;
+  width: 100vw;
+  height: var(--rulr-guide-width, 1px);
+}
+
+.rulr-guide.vertical {
+  top: 0;
+  bottom: 0;
+  width: var(--rulr-guide-width, 1px);
+  height: 100vh;
+}
+
+.rulr-guide.preview {
+  opacity: .58;
+  border-style: dashed;
 }
 
 .rulr-label {
