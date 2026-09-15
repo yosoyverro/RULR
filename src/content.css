@@ -61,16 +61,18 @@ html.rulr-active, html.rulr-active * {
 
 .rulr-label {
   position: fixed;
-  padding: 6px 8px;
-  border-radius: 7px;
-  background: rgba(15, 18, 24, 0.96);
+  max-width: min(460px, calc(100vw - 28px));
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(15, 18, 24, 0.97);
   color: white;
   border: 1px solid rgba(255,255,255,0.25);
   box-shadow: 0 6px 18px rgba(0,0,0,0.28);
-  font: 600 12px/1.2 Inter, ui-sans-serif, system-ui, sans-serif;
+  font: 600 12px/1.45 Inter, ui-sans-serif, system-ui, sans-serif;
   letter-spacing: .01em;
   pointer-events: none;
-  white-space: nowrap;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 #rulr-toast {
